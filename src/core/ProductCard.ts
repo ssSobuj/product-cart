@@ -2,12 +2,20 @@ export interface ProductDetailsType {
   name: string;
   priceBySize: { [size: string]: number };
   id: string;
-  image: string;
-  colors: string[];
+  colors: { name: string; colorCode: string }[];
+  images: { color: string; image: string }[];
+  defaultImage: string;
   stock: number;
+  ratings: number;
+  reviews: number;
+  productDescription: string;
+  productType: string;
+  modelNumber: string;
   isFavorite: boolean;
   defaultColor: string;
   defaultSize: string;
+  defaultPrice: number;
+  discountPrice: number;
 }
 export interface ProductType {
   name: string;
@@ -19,73 +27,117 @@ export interface ProductType {
   quantity: number;
 }
 
-const products: ProductDetailsType[] = [
-  {
-    name: "Classic T-Shirt",
-    id: "product-001",
-    image: "classic-tshirt.jpg",
-    colors: ["red", "blue", "white"],
-    stock: 10,
-    isFavorite: false,
-    defaultColor: "red",
-    defaultSize: "M",
-    priceBySize: {
-      S: 19.99,
-      M: 24.99,
-      L: 29.99,
-    },
-  },
-  {
-    name: "Running Shoes",
-    id: "product-002",
-    image: "running-shoes.jpg",
-    colors: ["black", "gray", "white"],
-    stock: 5,
-    isFavorite: true,
-    defaultColor: "black",
-    defaultSize: "10",
-    priceBySize: {
-      "8": 49.99,
-      "9": 54.99,
-      "10": 59.99,
-    },
-  },
-  {
-    name: "Denim Jacket",
-    id: "product-003",
-    image: "denim-jacket.jpg",
-    colors: ["blue", "black"],
-    stock: 8,
-    isFavorite: false,
-    defaultColor: "blue",
-    defaultSize: "L",
-    priceBySize: {
-      S: 59.99,
-      M: 69.99,
-      L: 79.99,
-      XL: 89.99,
-    },
-  },
-];
-
 class ProductCardRenderer {
-  private domRefs = {
-    get colorSelector() {
-      return document.querySelector(".color-selector");
+  protected readonly domRefs = {
+    get colorSelectors(): HTMLButtonElement[] {
+      return Array.from(document.querySelectorAll("#color-buttons button"));
     },
-    get sizeSelector() {
-      return document.querySelector(".size-selector");
+    get productImage(): HTMLImageElement {
+      return document.querySelector("#product-image")!;
     },
-    get favoriteButton() {
-      return document.querySelector(".favorite-button");
+    get sizeSelectors(): HTMLButtonElement[] {
+      return Array.from(document.querySelectorAll("#size-button button"));
+    },
+    get favoriteButton(): HTMLButtonElement {
+      return document.querySelector("#favorite-button")!;
+    },
+    get addToCartButton(): HTMLButtonElement {
+      return document.querySelector("#add-to-cart")!;
+    },
+    get decreaseButton(): HTMLButtonElement {
+      return document.querySelector("#decrease")!;
+    },
+    get increaseButton(): HTMLButtonElement {
+      return document.querySelector("#increase")!;
+    },
+    get quantityLabel(): HTMLSpanElement {
+      return document.querySelector("#quantity-label")!;
     },
   };
+  protected productDetails: ProductDetailsType = {
+    name: "",
+    priceBySize: {},
+    id: "",
+    defaultImage: "",
+    images: [],
+    colors: [],
+    stock: 0,
+    ratings: 0,
+    reviews: 0,
+    productDescription: "",
+    productType: "",
+    modelNumber: "",
+    isFavorite: false,
+    defaultColor: "",
+    defaultSize: "",
+    defaultPrice: 0,
+    discountPrice: 0,
+  };
+  protected selectedColor: string = "";
+  protected selectedSize: string = "";
+  protected cartQuantity: number = 0;
+  protected isFavorite: boolean = false;
+  protected priceBySize: { [size: string]: number } = {};
+  protected stock: number = 0;
+  protected selectColor(color: string): void {
+    throw new Error("Method not implemented.");
+  }
+  protected selectSize(size: string): void {
+    throw new Error("Method not implemented.");
+  }
+  protected toggleFavorite(): void {
+    throw new Error("Method not implemented.");
+  }
+  protected increaseQuantity(): void {
+    throw new Error("Method not implemented.");
+  }
+  protected decreaseQuantity(): void {
+    throw new Error("Method not implemented.");
+  }
+  protected addToCart(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  protected setupEventListeners(): void {
+    this.domRefs.colorSelectors.forEach((button) =>
+      button.addEventListener("click", (event: MouseEvent) => {
+        const target = event.currentTarget as HTMLButtonElement;
+        this.selectColor(target.dataset.color!);
+      })
+    );
+    this.domRefs.sizeSelectors.forEach((button) =>
+      button.addEventListener("click", (event: MouseEvent) => {
+        const target = event.currentTarget as HTMLButtonElement;
+        this.selectSize(target.dataset.size!);
+      })
+    );
+    this.domRefs.favoriteButton.addEventListener("click", () =>
+      this.toggleFavorite()
+    );
+    this.domRefs.addToCartButton.addEventListener("click", () =>
+      this.addToCart()
+    );
+
+    this.domRefs.increaseButton.addEventListener("click", () =>
+      this.increaseQuantity()
+    );
+    this.domRefs.decreaseButton.addEventListener("click", () =>
+      this.decreaseQuantity()
+    );
+    window.addEventListener("addToCart", (event: Event) => {
+      const product = (event as CustomEvent).detail;
+      console.log(product);
+    });
+  }
 
   /**
    * Updates the color selector UI elements
    * @protected
    */
   protected updateColorsUi(): void {
+    this.domRefs.productImage.src = this.productDetails.images.find(
+      (image) => image.color === this.selectedColor
+    )!.image;
   }
 
   /**
@@ -93,38 +145,213 @@ class ProductCardRenderer {
    * @protected
    */
   protected updateQuantityUi(): void {
+    this.domRefs.quantityLabel.textContent = this.cartQuantity.toString();
   }
 
   /**
    * Updates the size selector UI elements
    * @protected
    */
-  protected updateSizesUi(): void {
-  }
+  protected updateSizesUi(): void {}
 
   /**
    * Updates the favorite button UI state
    * @protected
    */
   protected updateFavoriteUi(): void {
+    if (this.isFavorite) {
+      this.domRefs.favoriteButton.classList.remove("text-transparent");
+      this.domRefs.favoriteButton.classList.add("text-[#6576FF]");
+    } else {
+      this.domRefs.favoriteButton.classList.remove("text-[#6576FF]");
+      this.domRefs.favoriteButton.classList.add("text-transparent");
+    }
+    console.log(
+      this.domRefs.favoriteButton.classList.contains("text-[#6576FF]")
+    );
   }
 
   /**
    * Renders the initial product card UI
    * @protected
    */
-  protected render(): void {
+  public render(): string {
+    const app = `
+      <div class="rounded-lg  w-full flex gap-[3.75rem]">
+        <!-- Left side - Image -->
+        <div class="w-1/2 rounded-lg flex items-center justify-center">
+          <img id="product-image" src="${
+            this.productDetails.defaultImage
+          }" alt="${
+      this.productDetails.name
+    }" class="w-full h-auto object-contain">
+        </div>
+
+        <!-- Right side - Product Details -->
+        <div class="w-1/2 flex flex-col justify-center">
+          <h1 class="text-[2.5rem] font-bold text-[#364A63] mb-2">${
+            this.productDetails.name
+          }</h1>
+          
+          <!-- Ratings -->
+          <div class="flex items-center gap-2 mb-4">
+            <div class="flex">
+              ${Array(5)
+                .fill("")
+                .map((_, i) => {
+                  const roundedRating = Math.floor(this.productDetails.ratings);
+                  const hasHalfStar = this.productDetails.ratings % 1 >= 0.5;
+
+                  return `
+                  <svg class="w-5 h-5 ${
+                    i < roundedRating
+                      ? "text-[#FFD200]"
+                      : hasHalfStar && i === roundedRating
+                      ? "text-[#FFD200]"
+                      : "text-gray-300"
+                  }" 
+                       fill="currentColor" viewBox="0 0 20 20">
+                    ${
+                      i < roundedRating || (hasHalfStar && i === roundedRating)
+                        ? `
+                      <defs>
+                        <linearGradient id="half-${i}">
+                          <stop offset="${
+                            hasHalfStar && i === roundedRating ? "50%" : "100%"
+                          }" stop-color="currentColor"/>
+                          <stop offset="${
+                            hasHalfStar && i === roundedRating ? "50%" : "100%"
+                          }" stop-color="#CBD5E0"/>
+                        </linearGradient>
+                      </defs>
+                    `
+                        : ""
+                    }
+                    <path 
+                      fill="${
+                        hasHalfStar && i === roundedRating
+                          ? `url(#half-${i})`
+                          : "currentColor"
+                      }"
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                `;
+                })
+                .join("")}
+            </div>
+            <span class="text-[#8091A7]">(${
+              this.productDetails.reviews
+            } Reviews)</span>
+          </div>
+
+          <!-- Price -->
+          <div class="flex items-center gap-4 mb-6">
+          <span class="text-xl text-gray-400 line-through">$${this.productDetails.defaultPrice.toFixed(
+            2
+          )}</span>         
+
+            <span class="text-3xl font-bold text-[#6576FF]">$${this.productDetails.discountPrice.toFixed(
+              2
+            )}</span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-[#8091A7] mb-6">${
+            this.productDetails.productDescription
+          }</p>
+
+          <!-- Product Info -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <span class="text-gray-500">Type</span>
+              <p class="font-medium">${this.productDetails.productType}</p>
+            </div>
+            <div>
+              <span class="text-gray-500">Model Number</span>
+              <p class="font-medium">${this.productDetails.modelNumber}</p>
+            </div>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="mb-6">
+            <h3 class="text-gray-800 font-medium mb-2">Band Color</h3>
+            <div id="color-buttons" class="flex gap-2">
+              ${this.productDetails.colors
+                .map(
+                  (color) => `
+                <button 
+                  
+                  class="w-8 h-8 rounded-full ${
+                    color.name === this.selectedColor
+                      ? "ring-2 ring-offset-2 ring-[#6576FF]"
+                      : ""
+                  }"
+                  style="background-color: ${color.colorCode}"
+                  data-color="${color.name}"
+                ></button>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+
+          <!-- Size Selection -->
+          <div class="mb-6">
+            <h3 class="text-gray-800 font-medium mb-2">Wrist Size</h3>
+            <div id="size-button" class="flex gap-2">
+              ${Object.entries(this.priceBySize)
+                .map(
+                  ([size, price]) => `
+                <button 
+                  class="px-4 py-2 border rounded-md ${
+                    size === this.selectedSize
+                      ? "border-[#6576FF] text-[#6576FF]"
+                      : "border-gray-300"
+                  }"
+                  data-size="${size}"
+                >${size} ${price}</button>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+
+          <!-- Add to Cart -->
+          <div class="flex gap-4">
+            <div class="flex items-center border rounded-md">
+              <button id="decrease" class="px-4 py-2 text-gray-600 hover:text-[#6576FF]" id="decrease">-</button>
+              <span id="quantity-label" class="px-4 py-2 border-x">${
+                this.cartQuantity
+              }</span>
+              <button id="increase" class="px-4 py-2 text-gray-600 hover:text-[#6576FF]" id="increase">+</button>
+            </div>
+            <button id="add-to-cart" class="flex-1 bg-[#6576FF] text-white py-2 px-6 rounded-md hover:bg-[#7C3AED]">
+              Add to Cart
+            </button>
+            <button id="favorite-button" class="p-2 border rounded-md text-${
+              this.isFavorite ? "[#6576FF]" : "transparent"
+            }">
+              <svg class="w-6 h-6 fill-[currentColor] stroke-[#6576FF]" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return app;
   }
 }
 
 class ProductCard extends ProductCardRenderer {
-  private productDetails: ProductDetailsType;
-  private stock: number;
-  private isFavorite: boolean;
-  private selectedColor: string;
-  private priceBySize: { [size: string]: number };
-  private selectedSize: string;
-  private cartQuantity: number = 0;
+  protected productDetails: ProductDetailsType;
+  protected stock: number;
+  protected isFavorite: boolean;
+  protected selectedColor: string;
+  protected priceBySize: { [size: string]: number };
+  protected selectedSize: string;
+  protected cartQuantity: number = 0;
 
   /**
    * Initializes a new ProductCard instance
@@ -148,8 +375,9 @@ class ProductCard extends ProductCardRenderer {
    * @private
    */
   private init() {
-    this.render();
-    window.addEventListener("addToCart", this.addToCart);
+    const app = document.getElementById("app");
+    app!.innerHTML = this.render();
+    this.setupEventListeners();
   }
 
   /**
@@ -158,12 +386,14 @@ class ProductCard extends ProductCardRenderer {
    */
   addToCart = (): void => {
     const product: ProductType = {
-      name    : this.productDetails.name,
-      id      : this.productDetails.id,
-      image   : this.productDetails.image,
-      color   : this.selectedColor,
-      price   : this.priceBySize[this.selectedSize],
-      size    : this.selectedSize,
+      name: this.productDetails.name,
+      id: this.productDetails.id,
+      image: this.productDetails.images.find(
+        (image) => image.color === this.selectedColor
+      )!.image,
+      color: this.selectedColor,
+      price: this.priceBySize[this.selectedSize],
+      size: this.selectedSize,
       quantity: this.cartQuantity,
     };
     const event = new CustomEvent("addToCart", { detail: product });
@@ -173,28 +403,28 @@ class ProductCard extends ProductCardRenderer {
   /**
    * Updates the selected color of the product
    * @param color - The new color to select
-   * @private
+   * @public
    */
-  private selectColor(color: string) {
+  public selectColor = (color: string) => {
     this.selectedColor = color;
     this.updateColorsUi();
-  }
+  };
 
   /**
    * Updates the selected size of the product
    * @param size - The new size to select
-   * @private
+   * @protected
    */
-  private selectSize(size: string) {
+  protected selectSize(size: string) {
     this.selectedSize = size;
     this.updateSizesUi();
   }
 
   /**
    * Toggles the favorite status of the product
-   * @private
+   * @protected
    */
-  private toggleFavorite() {
+  protected toggleFavorite() {
     this.isFavorite = !this.isFavorite;
     this.updateFavoriteUi();
   }
@@ -202,12 +432,11 @@ class ProductCard extends ProductCardRenderer {
   /**
    * Increases the cart quantity by 1 if stock is available
    * Updates both cart quantity and available stock
-   * @private
+   * @protected
    */
-  private increaseQuantity() {
+  protected increaseQuantity() {
     if (this.cartQuantity < this.stock) {
       this.cartQuantity++;
-      this.stock--;
       this.updateQuantityUi();
     }
   }
@@ -215,12 +444,11 @@ class ProductCard extends ProductCardRenderer {
   /**
    * Decreases the cart quantity by 1 if cart is not empty
    * Updates both cart quantity and available stock
-   * @private
+   * @protected
    */
-  private decreaseQuantity() {
+  protected decreaseQuantity() {
     if (this.cartQuantity > 0) {
       this.cartQuantity--;
-      this.stock++;
       this.updateQuantityUi();
     }
   }
