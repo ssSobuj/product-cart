@@ -28,32 +28,6 @@ export interface ProductType {
 }
 
 class ProductCardRenderer {
-  protected readonly domRefs = {
-    get colorSelectors(): HTMLButtonElement[] {
-      return Array.from(document.querySelectorAll("#color-buttons button"));
-    },
-    get productImage(): HTMLImageElement {
-      return document.querySelector("#product-image")!;
-    },
-    get sizeSelectors(): HTMLButtonElement[] {
-      return Array.from(document.querySelectorAll("#size-button button"));
-    },
-    get favoriteButton(): HTMLButtonElement {
-      return document.querySelector("#favorite-button")!;
-    },
-    get addToCartButton(): HTMLButtonElement {
-      return document.querySelector("#add-to-cart")!;
-    },
-    get decreaseButton(): HTMLButtonElement {
-      return document.querySelector("#decrease")!;
-    },
-    get increaseButton(): HTMLButtonElement {
-      return document.querySelector("#increase")!;
-    },
-    get quantityLabel(): HTMLSpanElement {
-      return document.querySelector("#quantity-label")!;
-    },
-  };
   protected productDetails: ProductDetailsType = {
     name: "",
     priceBySize: {},
@@ -72,6 +46,35 @@ class ProductCardRenderer {
     defaultSize: "",
     defaultPrice: 0,
     discountPrice: 0,
+  };
+  protected domRefs = () => {
+    const id = this.productDetails.id;
+    return {
+      get colorSelectors(): HTMLButtonElement[] {
+        return Array.from(document.querySelectorAll(`#${id}-color-buttons button`));
+      },
+      get productImage(): HTMLImageElement {
+        return document.querySelector(`#${id}-product-image`)!;
+      },
+      get sizeSelectors(): HTMLButtonElement[] {
+        return Array.from(document.querySelectorAll(`#${id}-size-button button`));
+      },
+      get favoriteButton(): HTMLButtonElement {
+        return document.querySelector(`#${id}-favorite-button`)!;
+      },
+      get addToCartButton(): HTMLButtonElement {
+        return document.querySelector(`#${id}-add-to-cart`)!;
+      },
+      get decreaseButton(): HTMLButtonElement {
+        return document.querySelector(`#${id}-decrease`)!;
+      },
+      get increaseButton(): HTMLButtonElement {
+        return document.querySelector(`#${id}-increase`)!;
+      },
+      get quantityLabel(): HTMLSpanElement {
+        return document.querySelector(`#${id}-quantity-label`)!;
+      },
+    };
   };
   protected selectedColor: string = "";
   protected selectedSize: string = "";
@@ -98,36 +101,32 @@ class ProductCardRenderer {
     throw new Error("Method not implemented.");
   }
 
-  protected setupEventListeners(): void {
-    this.domRefs.colorSelectors.forEach((button) =>
+  public setupEventListeners(): void {
+    this.domRefs().colorSelectors.forEach((button) =>
       button.addEventListener("click", (event: MouseEvent) => {
         const target = event.currentTarget as HTMLButtonElement;
         this.selectColor(target.dataset.color!);
       })
     );
-    this.domRefs.sizeSelectors.forEach((button) =>
+    this.domRefs().sizeSelectors.forEach((button) =>
       button.addEventListener("click", (event: MouseEvent) => {
         const target = event.currentTarget as HTMLButtonElement;
         this.selectSize(target.dataset.size!);
       })
     );
-    this.domRefs.favoriteButton.addEventListener("click", () =>
+    this.domRefs().favoriteButton.addEventListener("click", () =>
       this.toggleFavorite()
     );
-    this.domRefs.addToCartButton.addEventListener("click", () =>
+    this.domRefs().addToCartButton.addEventListener("click", () =>
       this.addToCart()
     );
 
-    this.domRefs.increaseButton.addEventListener("click", () =>
+    this.domRefs().increaseButton.addEventListener("click", () =>
       this.increaseQuantity()
     );
-    this.domRefs.decreaseButton.addEventListener("click", () =>
+    this.domRefs().decreaseButton.addEventListener("click", () =>
       this.decreaseQuantity()
     );
-    window.addEventListener("addToCart", (event: Event) => {
-      const product = (event as CustomEvent).detail;
-      console.log(product);
-    });
   }
 
   /**
@@ -135,9 +134,18 @@ class ProductCardRenderer {
    * @protected
    */
   protected updateColorsUi(): void {
-    this.domRefs.productImage.src = this.productDetails.images.find(
+    this.domRefs().productImage.src = this.productDetails.images.find(
       (image) => image.color === this.selectedColor
     )!.image;
+    const colorCode = this.productDetails.colors.find(
+      (color) => color.name === this.selectedColor
+    )!.colorCode;
+    this.domRefs().colorSelectors.forEach((button) => {
+      button.classList.remove("ring-2", "ring-offset-2", "ring-[#6576FF");
+      if (button.dataset.color === this.selectedColor) {
+        button.classList.add("ring-2", "ring-offset-2", `ring-[${colorCode}]`);
+      }
+    });
   }
 
   /**
@@ -145,14 +153,27 @@ class ProductCardRenderer {
    * @protected
    */
   protected updateQuantityUi(): void {
-    this.domRefs.quantityLabel.textContent = this.cartQuantity.toString();
+    this.domRefs().quantityLabel.textContent = this.cartQuantity.toString();
   }
 
   /**
    * Updates the size selector UI elements
    * @protected
    */
-  protected updateSizesUi(): void {}
+  protected updateSizesUi(): void {
+    this.domRefs().sizeSelectors.forEach((button) => {
+      button.classList.remove("border-[#6576FF]", "text-[#6576FF]");
+      if (button.dataset.size === this.selectedSize) {
+        button.classList.add("border-[#6576FF]", "text-[#6576FF]");
+      }
+    });
+    this.domRefs().sizeSelectors.forEach((button) => {
+      button.classList.remove("border-[#6576FF]", "text-[#6576FF]");
+      if (button.dataset.size === this.selectedSize) {
+        button.classList.add("border-[#6576FF]", "text-[#6576FF]");
+      }
+    });
+  }
 
   /**
    * Updates the favorite button UI state
@@ -160,106 +181,79 @@ class ProductCardRenderer {
    */
   protected updateFavoriteUi(): void {
     if (this.isFavorite) {
-      this.domRefs.favoriteButton.classList.remove("text-transparent");
-      this.domRefs.favoriteButton.classList.add("text-[#6576FF]");
+      this.domRefs().favoriteButton.classList.remove("text-transparent");
+      this.domRefs().favoriteButton.classList.add("text-[#6576FF]");
     } else {
-      this.domRefs.favoriteButton.classList.remove("text-[#6576FF]");
-      this.domRefs.favoriteButton.classList.add("text-transparent");
+      this.domRefs().favoriteButton.classList.remove("text-[#6576FF]");
+      this.domRefs().favoriteButton.classList.add("text-transparent");
     }
-    console.log(
-      this.domRefs.favoriteButton.classList.contains("text-[#6576FF]")
-    );
   }
 
   /**
    * Renders the initial product card UI
    * @protected
    */
-  public render(): string {
+  public render(): HTMLDivElement {
     const app = `
-      <div class="rounded-lg  w-full flex gap-[3.75rem]">
+      <div class="rounded-lg w-full flex gap-[3.75rem] py-10">
         <!-- Left side - Image -->
         <div class="w-1/2 rounded-lg flex items-center justify-center">
-          <img id="product-image" src="${
-            this.productDetails.defaultImage
-          }" alt="${
-      this.productDetails.name
-    }" class="w-full h-auto object-contain">
+          <img 
+            id="${this.productDetails.id}-product-image" 
+            src="${this.productDetails.defaultImage}" 
+            alt="${this.productDetails.name}" 
+            class="w-full h-auto object-contain"
+          >
         </div>
-
+  
         <!-- Right side - Product Details -->
         <div class="w-1/2 flex flex-col justify-center">
-          <h1 class="text-[2.5rem] font-bold text-[#364A63] mb-2">${
-            this.productDetails.name
-          }</h1>
+          <h1 class="text-[2.5rem] font-bold text-[#364A63] mb-2">
+            ${this.productDetails.name}
+          </h1>
           
           <!-- Ratings -->
           <div class="flex items-center gap-2 mb-4">
             <div class="flex">
-              ${Array(5)
-                .fill("")
-                .map((_, i) => {
-                  const roundedRating = Math.floor(this.productDetails.ratings);
-                  const hasHalfStar = this.productDetails.ratings % 1 >= 0.5;
-
-                  return `
-                  <svg class="w-5 h-5 ${
-                    i < roundedRating
-                      ? "text-[#FFD200]"
-                      : hasHalfStar && i === roundedRating
-                      ? "text-[#FFD200]"
-                      : "text-gray-300"
-                  }" 
-                       fill="currentColor" viewBox="0 0 20 20">
-                    ${
-                      i < roundedRating || (hasHalfStar && i === roundedRating)
-                        ? `
-                      <defs>
-                        <linearGradient id="half-${i}">
-                          <stop offset="${
-                            hasHalfStar && i === roundedRating ? "50%" : "100%"
-                          }" stop-color="currentColor"/>
-                          <stop offset="${
-                            hasHalfStar && i === roundedRating ? "50%" : "100%"
-                          }" stop-color="#CBD5E0"/>
-                        </linearGradient>
-                      </defs>
-                    `
-                        : ""
-                    }
-                    <path 
-                      fill="${
-                        hasHalfStar && i === roundedRating
-                          ? `url(#half-${i})`
-                          : "currentColor"
-                      }"
-                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              ${Array(5).fill("").map((_, i) => {
+                const roundedRating = Math.floor(this.productDetails.ratings);
+                const hasHalfStar = this.productDetails.ratings % 1 >= 0.5;
+  
+                return `
+                  <svg 
+                    class="w-5 h-5 ${
+                      i < roundedRating
+                        ? "text-[#FFD200]"
+                        : hasHalfStar && i === roundedRating
+                        ? "text-[#FFD200]"
+                        : "text-gray-300"
+                    }" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                   </svg>
                 `;
-                })
-                .join("")}
+              }).join("")}
             </div>
-            <span class="text-[#8091A7]">(${
-              this.productDetails.reviews
-            } Reviews)</span>
+            <span class="text-[#8091A7]">(${this.productDetails.reviews} Reviews)</span>
           </div>
-
+  
           <!-- Price -->
           <div class="flex items-center gap-4 mb-6">
-          <span class="text-xl text-gray-400 line-through">$${this.productDetails.defaultPrice.toFixed(
-            2
-          )}</span>         
-
-            <span class="text-3xl font-bold text-[#6576FF]">$${this.productDetails.discountPrice.toFixed(
-              2
-            )}</span>
+            <span class="text-xl text-gray-400 line-through">
+              $${this.productDetails.defaultPrice.toFixed(2)}
+            </span>
+            <span class="text-3xl font-bold text-[#6576FF]">
+              $${this.productDetails.discountPrice.toFixed(2)}
+            </span>
           </div>
-
+  
           <!-- Description -->
-          <p class="text-[#8091A7] mb-6">${
-            this.productDetails.productDescription
-          }</p>
-
+          <p class="text-[#8091A7] mb-6">
+            ${this.productDetails.productDescription}
+          </p>
+  
           <!-- Product Info -->
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
@@ -271,37 +265,30 @@ class ProductCardRenderer {
               <p class="font-medium">${this.productDetails.modelNumber}</p>
             </div>
           </div>
-
+  
           <!-- Color Selection -->
           <div class="mb-6">
             <h3 class="text-gray-800 font-medium mb-2">Band Color</h3>
-            <div id="color-buttons" class="flex gap-2">
-              ${this.productDetails.colors
-                .map(
-                  (color) => `
+            <div id="${this.productDetails.id}-color-buttons" class="flex gap-5">
+              ${this.productDetails.colors.map(color => `
                 <button 
-                  
-                  class="w-8 h-8 rounded-full ${
+                  data-color="${color.name}"
+                  class="w-6 aspect-square rounded-full ${
                     color.name === this.selectedColor
-                      ? "ring-2 ring-offset-2 ring-[#6576FF]"
+                      ? `ring-2 ring-offset-2 ring-[${color.colorCode}]`
                       : ""
                   }"
                   style="background-color: ${color.colorCode}"
-                  data-color="${color.name}"
                 ></button>
-              `
-                )
-                .join("")}
+              `).join("")}
             </div>
           </div>
-
+  
           <!-- Size Selection -->
           <div class="mb-6">
             <h3 class="text-gray-800 font-medium mb-2">Wrist Size</h3>
-            <div id="size-button" class="flex gap-2">
-              ${Object.entries(this.priceBySize)
-                .map(
-                  ([size, price]) => `
+            <div id="${this.productDetails.id}-size-button" class="flex gap-2">
+              ${Object.entries(this.priceBySize).map(([size, price]) => `
                 <button 
                   class="px-4 py-2 border rounded-md ${
                     size === this.selectedSize
@@ -310,37 +297,53 @@ class ProductCardRenderer {
                   }"
                   data-size="${size}"
                 >${size} ${price}</button>
-              `
-                )
-                .join("")}
+              `).join("")}
             </div>
           </div>
-
+  
           <!-- Add to Cart -->
           <div class="flex gap-4">
             <div class="flex items-center border rounded-md">
-              <button id="decrease" class="px-4 py-2 text-gray-600 hover:text-[#6576FF]" id="decrease">-</button>
-              <span id="quantity-label" class="px-4 py-2 border-x">${
-                this.cartQuantity
-              }</span>
-              <button id="increase" class="px-4 py-2 text-gray-600 hover:text-[#6576FF]" id="increase">+</button>
+              <button 
+                id="${this.productDetails.id}-decrease" 
+                class="px-4 py-2 text-gray-600 hover:text-[#6576FF]"
+              >-</button>
+              <span 
+                id="${this.productDetails.id}-quantity-label" 
+                class="px-4 py-2 border-x"
+              >${this.cartQuantity}</span>
+              <button 
+                id="${this.productDetails.id}-increase" 
+                class="px-4 py-2 text-gray-600 hover:text-[#6576FF]"
+              >+</button>
             </div>
-            <button id="add-to-cart" class="flex-1 bg-[#6576FF] text-white py-2 px-6 rounded-md hover:bg-[#7C3AED]">
+            <button 
+              id="${this.productDetails.id}-add-to-cart" 
+              class="flex-1 bg-[#6576FF] text-white py-2 px-6 rounded-md hover:bg-[#7C3AED]"
+            >
               Add to Cart
             </button>
-            <button id="favorite-button" class="p-2 border rounded-md text-${
-              this.isFavorite ? "[#6576FF]" : "transparent"
-            }">
+            <button 
+              id="${this.productDetails.id}-favorite-button" 
+              class="p-2 border rounded-md text-${this.isFavorite ? "[#6576FF]" : "transparent"}"
+            >
               <svg class="w-6 h-6 fill-[currentColor] stroke-[#6576FF]" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                <path 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" 
+                  stroke-width="2" 
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
               </svg>
             </button>
           </div>
         </div>
       </div>
     `;
-
-    return app;
+  
+    const div = document.createElement("div");
+    div.innerHTML = app;
+    return div;
   }
 }
 
@@ -367,17 +370,6 @@ class ProductCard extends ProductCardRenderer {
     this.isFavorite = productDetails.isFavorite;
     this.selectedColor = productDetails.defaultColor;
     this.selectedSize = productDetails.defaultSize;
-    this.init();
-  }
-
-  /**
-   * Initializes event listeners and renders the initial UI
-   * @private
-   */
-  private init() {
-    const app = document.getElementById("app");
-    app!.innerHTML = this.render();
-    this.setupEventListeners();
   }
 
   /**
