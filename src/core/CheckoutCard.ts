@@ -2,59 +2,85 @@ import { ProductType } from "./ProductCard";
 
 class CheckoutCardRenderer {
   protected readonly domRef = {
-    get openCart() { return document.getElementById('open-cart') },
-    get continueShopping() { return document.getElementById('continue-shopping') },
-    get checkoutButton() { return document.getElementById('checkout-button') },
-    get checkoutModal() { return document.getElementById('checkout-modal') },
-    get cartItems() { return document.getElementById('cart-items') },
-    get totalPrice() { return document.getElementById('total-price') },
-    get totalItems() { return document.getElementById('total-items') },
+    get openCart() {
+      return document.getElementById("open-cart");
+    },
+    get continueShopping() {
+      return document.getElementById("continue-shopping");
+    },
+    get checkoutButton() {
+      return document.getElementById("checkout-button");
+    },
+    get checkoutModal() {
+      return document.getElementById("checkout-modal");
+    },
+    get cartItems() {
+      return document.getElementById("cart-items");
+    },
+    get totalPrice() {
+      return document.getElementById("total-price");
+    },
+    get totalItems() {
+      return document.getElementById("total-items");
+    },
   };
   protected products: ProductType[] = [];
   protected checkoutCount: number = 0;
 
   public setupEventListeners() {
-    console.log('domRef', this.domRef);
-    
-    this.domRef.openCart?.addEventListener('click', () => {
-      this.domRef.checkoutModal?.classList.remove('hidden');
+    this.domRef.openCart?.addEventListener("click", () => {
+      this.domRef.checkoutModal?.classList.remove("hidden");
       this.updateCartItemsUI();
       this.updateTotalPriceUI();
       this.updateTotalItemsUI();
     });
 
-    this.domRef.continueShopping?.addEventListener('click', () => {
-      this.domRef.checkoutModal?.classList.add('hidden');
+    this.domRef.continueShopping?.addEventListener("click", () => {
+      this.domRef.checkoutModal?.classList.add("hidden");
     });
 
-    this.domRef.checkoutButton?.addEventListener('click', () => {
+    this.domRef.checkoutButton?.addEventListener("click", () => {
       // Handle checkout logic here
-      console.log('Proceeding to checkout with items:', this.products);
+      console.log("Proceeding to checkout with items:", this.products);
     });
   }
 
   protected updateCartItemsUI() {
-    this.domRef.cartItems!.innerHTML = this.products.map(product => `
+    this.domRef.cartItems!.innerHTML = this.products
+      .map(
+        (product) => `
       <div class="grid grid-cols-5 gap-4 py-4 border-b items-center">
         <div class="col-span-2 flex items-center gap-4">
-          <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded">
+          <img src="${product.image}" alt="${
+          product.name
+        }" class="w-16 h-16 object-cover rounded">
           <span class="font-medium text-[#364A63]">${product.name}</span>
         </div>
         <div>${product.color}</div>
         <div>${product.size}</div>
         <div>${product.quantity}</div>
-        <div class="text-right">$${(product.price * product.quantity).toFixed(2)}</div>
+        <div class="text-right">$${(product.price * product.quantity).toFixed(
+          2
+        )}</div>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   }
 
   protected updateTotalPriceUI() {
-    const total = this.products.reduce((sum, product) => sum + (product.price * product.quantity), 0);
+    const total = this.products.reduce(
+      (sum, product) => sum + product.price * product.quantity,
+      0
+    );
     this.domRef.totalPrice!.textContent = total.toFixed(2);
   }
 
   protected updateTotalItemsUI() {
-    const totalItems = this.products.reduce((sum, product) => sum + product.quantity, 0);
+    const totalItems = this.products.reduce(
+      (sum, product) => sum + product.quantity,
+      0
+    );
     this.domRef.totalItems!.textContent = totalItems.toString();
   }
 
@@ -66,9 +92,15 @@ class CheckoutCardRenderer {
   }
 
   protected renderModal() {
-    const total = this.products.reduce((sum, product) => sum + (product.price * product.quantity), 0);
-    const totalItems = this.products.reduce((sum, product) => sum + product.quantity, 0);
-  
+    const total = this.products.reduce(
+      (sum, product) => sum + product.price * product.quantity,
+      0
+    );
+    const totalItems = this.products.reduce(
+      (sum, product) => sum + product.quantity,
+      0
+    );
+
     return `
       <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-8 w-[800px] max-h-[90vh] overflow-y-auto">
@@ -92,7 +124,9 @@ class CheckoutCardRenderer {
           <div class="flex justify-between items-center mt-6 mb-8">
             <div class="text-xl font-bold text-[#364A63]">Total</div>
             <div id="total-items" class="text-xl font-bold text-[#364A63]">${totalItems}</div>
-            <div class="text-xl font-bold text-[#364A63]">$<span id="total-price">${total.toFixed(2)}</span></div>
+            <div class="text-xl font-bold text-[#364A63]">$<span id="total-price">${total.toFixed(
+              2
+            )}</span></div>
           </div>
   
           <!-- Buttons -->
@@ -129,24 +163,21 @@ class CheckoutCard extends CheckoutCardRenderer {
   protected checkoutCount: number = 0;
   constructor() {
     super();
-    window.addEventListener(
-      "addToCart",
-      ((event: CustomEvent) => {
-        this.addToCart(event.detail);
-      }) as EventListener,
-    );
+    window.addEventListener("addToCart", ((event: CustomEvent) => {
+      this.addToCart(event.detail);
+    }) as EventListener);
   }
 
   public addToCart(product: ProductType) {
-    console.log('DISPATCHED', product);
-    
+    console.log("DISPATCHED", product);
+
     const productIndex = this.products.findIndex((p) => p.id === product.id);
     if (productIndex !== -1) {
-        this.products[productIndex] = product;
+      this.products[productIndex] = product;
     } else {
-        this.products.push(product);
-        this.checkoutCount++;
-        this.updateCheckoutCountUI();
+      this.products.push(product);
+      this.checkoutCount++;
+      this.updateCheckoutCountUI();
     }
   }
 }

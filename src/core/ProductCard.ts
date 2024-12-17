@@ -47,17 +47,22 @@ class ProductCardRenderer {
     defaultPrice: 0,
     discountPrice: 0,
   };
+
   protected domRefs = () => {
     const id = this.productDetails.id;
     return {
       get colorSelectors(): HTMLButtonElement[] {
-        return Array.from(document.querySelectorAll(`#${id}-color-buttons button`));
+        return Array.from(
+          document.querySelectorAll(`#${id}-color-buttons button`)
+        );
       },
       get productImage(): HTMLImageElement {
         return document.querySelector(`#${id}-product-image`)!;
       },
       get sizeSelectors(): HTMLButtonElement[] {
-        return Array.from(document.querySelectorAll(`#${id}-size-button button`));
+        return Array.from(
+          document.querySelectorAll(`#${id}-size-button button`)
+        );
       },
       get favoriteButton(): HTMLButtonElement {
         return document.querySelector(`#${id}-favorite-button`)!;
@@ -78,7 +83,7 @@ class ProductCardRenderer {
   };
   protected selectedColor: string = "";
   protected selectedSize: string = "";
-  protected cartQuantity: number = 0;
+  protected cartQuantity: number = 1;
   protected isFavorite: boolean = false;
   protected priceBySize: { [size: string]: number } = {};
   protected stock: number = 0;
@@ -215,11 +220,13 @@ class ProductCardRenderer {
           <!-- Ratings -->
           <div class="flex items-center gap-2 mb-4">
             <div class="flex">
-              ${Array(5).fill("").map((_, i) => {
-                const roundedRating = Math.floor(this.productDetails.ratings);
-                const hasHalfStar = this.productDetails.ratings % 1 >= 0.5;
-  
-                return `
+              ${Array(5)
+                .fill("")
+                .map((_, i) => {
+                  const roundedRating = Math.floor(this.productDetails.ratings);
+                  const hasHalfStar = this.productDetails.ratings % 1 >= 0.5;
+
+                  return `
                   <svg 
                     class="w-5 h-5 ${
                       i < roundedRating
@@ -234,9 +241,12 @@ class ProductCardRenderer {
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                   </svg>
                 `;
-              }).join("")}
+                })
+                .join("")}
             </div>
-            <span class="text-[#8091A7]">(${this.productDetails.reviews} Reviews)</span>
+            <span class="text-[#8091A7]">(${
+              this.productDetails.reviews
+            } Reviews)</span>
           </div>
   
           <!-- Price -->
@@ -269,8 +279,12 @@ class ProductCardRenderer {
           <!-- Color Selection -->
           <div class="mb-6">
             <h3 class="text-gray-800 font-medium mb-2">Band Color</h3>
-            <div id="${this.productDetails.id}-color-buttons" class="flex gap-5">
-              ${this.productDetails.colors.map(color => `
+            <div id="${
+              this.productDetails.id
+            }-color-buttons" class="flex gap-5">
+              ${this.productDetails.colors
+                .map(
+                  (color) => `
                 <button 
                   data-color="${color.name}"
                   class="w-6 aspect-square rounded-full ${
@@ -280,7 +294,9 @@ class ProductCardRenderer {
                   }"
                   style="background-color: ${color.colorCode}"
                 ></button>
-              `).join("")}
+              `
+                )
+                .join("")}
             </div>
           </div>
   
@@ -288,7 +304,9 @@ class ProductCardRenderer {
           <div class="mb-6">
             <h3 class="text-gray-800 font-medium mb-2">Wrist Size</h3>
             <div id="${this.productDetails.id}-size-button" class="flex gap-2">
-              ${Object.entries(this.priceBySize).map(([size, price]) => `
+              ${Object.entries(this.priceBySize)
+                .map(
+                  ([size, price]) => `
                 <button 
                   class="px-4 py-2 border rounded-md ${
                     size === this.selectedSize
@@ -297,7 +315,9 @@ class ProductCardRenderer {
                   }"
                   data-size="${size}"
                 >${size} ${price}</button>
-              `).join("")}
+              `
+                )
+                .join("")}
             </div>
           </div>
   
@@ -325,7 +345,9 @@ class ProductCardRenderer {
             </button>
             <button 
               id="${this.productDetails.id}-favorite-button" 
-              class="p-2 border rounded-md text-${this.isFavorite ? "[#6576FF]" : "transparent"}"
+              class="p-2 border rounded-md text-${
+                this.isFavorite ? "[#6576FF]" : "transparent"
+              }"
             >
               <svg class="w-6 h-6 fill-[currentColor] stroke-[#6576FF]" viewBox="0 0 24 24">
                 <path 
@@ -340,7 +362,7 @@ class ProductCardRenderer {
         </div>
       </div>
     `;
-  
+
     const div = document.createElement("div");
     div.innerHTML = app;
     return div;
@@ -354,7 +376,7 @@ class ProductCard extends ProductCardRenderer {
   protected selectedColor: string;
   protected priceBySize: { [size: string]: number };
   protected selectedSize: string;
-  protected cartQuantity: number = 0;
+  protected cartQuantity: number = 1;
 
   /**
    * Initializes a new ProductCard instance
@@ -438,9 +460,9 @@ class ProductCard extends ProductCardRenderer {
    * Updates both cart quantity and available stock
    * @protected
    */
-  protected decreaseQuantity() {
-    if (this.cartQuantity > 0) {
-      this.cartQuantity--;
+  protected decreaseQuantity(): void {
+    if (this.cartQuantity > 1) {
+      this.cartQuantity -= 1;
       this.updateQuantityUi();
     }
   }
