@@ -178,7 +178,7 @@ class ProductCardRenderer {
       if (button.dataset.size === this.selectedSize) {
         // Remove the default color class from the button and the span
         button.classList.remove("border-gray-300");
-        button.firstElementChild?.classList.remove("text-[#8091A7]");
+        button.firstElementChild?.classList.remove("text-[#364A63]");
 
         // Add select color class to the button and the span
         button.classList.add("border-[#6576FF]", "text-[#6576FF]");
@@ -319,7 +319,7 @@ class ProductCardRenderer {
                 .map(
                   ([size, price]) => `
                 <button 
-                  class="px-[1.125rem] text-[#8091A7] text-sm py-2 border rounded-md ${
+                  class="px-[1.125rem] text-[#364A63] text-sm py-2 border rounded-md ${
                     size === this.selectedSize
                       ? "border-[#6576FF]"
                       : "border-gray-300"
@@ -328,7 +328,7 @@ class ProductCardRenderer {
                 ><span class="font-bold ${
                   size === this.selectedSize
                     ? "text-[#6576FF]"
-                    : "text-[#8091A7]"
+                    : "text-[#364A63]"
                 }">${size}</span> <span class="text-[#8091A7]">$${price}</span></button>
               `
                 )
