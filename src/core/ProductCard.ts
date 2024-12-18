@@ -200,26 +200,26 @@ class ProductCardRenderer {
    */
   public render(): HTMLDivElement {
     const app = `
-      <div class="rounded-lg w-full flex gap-[3.75rem] py-10">
+      <div class="rounded-lg w-full flex flex-col md:flex-row gap-x-[3.75rem] py-10">
         <!-- Left side - Image -->
-        <div class="w-1/2 rounded-lg flex items-center justify-center">
+        <div class="md:w-1/2 w-full rounded-lg flex items-center justify-center">
           <img 
             id="${this.productDetails.id}-product-image" 
             src="${this.productDetails.defaultImage}" 
             alt="${this.productDetails.name}" 
-            class="w-full h-auto object-contain"
+            class="w-full h-auto md:object-contain rounded max-h-[45.0625rem] max-w-[39.375rem]"
           >
         </div>
   
         <!-- Right side - Product Details -->
-        <div class="w-1/2 flex flex-col justify-center">
-          <h1 class="text-[2.5rem] font-bold text-[#364A63] mb-2">
+        <div class="md:w-1/2 w-full mt-5 md:mt-0 flex flex-col justify-center">
+          <h1 class="text-[2.5rem] leading-[2.75rem] font-bold text-[#364A63] mb-3">
             ${this.productDetails.name}
           </h1>
           
           <!-- Ratings -->
-          <div class="flex items-center gap-2 mb-4">
-            <div class="flex">
+          <div class="flex items-center gap-2  mb-[1.6875rem]">
+            <div class="flex relative -left-1 justify-between">
               ${Array(5)
                 .fill("")
                 .map((_, i) => {
@@ -244,50 +244,54 @@ class ProductCardRenderer {
                 })
                 .join("")}
             </div>
-            <span class="text-[#8091A7]">(${
+            <span class="text-[#8091A7] text-sm">(${
               this.productDetails.reviews
             } Reviews)</span>
           </div>
   
           <!-- Price -->
-          <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center gap-[0.3125rem] mb-5">
             <span class="text-xl text-gray-400 line-through">
               $${this.productDetails.defaultPrice.toFixed(2)}
             </span>
-            <span class="text-3xl font-bold text-[#6576FF]">
+            <span class="text-xl font-bold text-[#6576FF]">
               $${this.productDetails.discountPrice.toFixed(2)}
             </span>
           </div>
   
           <!-- Description -->
-          <p class="text-[#8091A7] mb-6">
+          <p class="text-[#8091A7] mb-6 leading-[1.875rem]">
             ${this.productDetails.productDescription}
           </p>
   
           <!-- Product Info -->
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <span class="text-gray-500">Type</span>
-              <p class="font-medium">${this.productDetails.productType}</p>
+              <span class="text-[#8091A7] text-sm leading-[1.44375rem]">Type</span>
+              <p class="font-bold text-[#364A63]">${
+                this.productDetails.productType
+              }</p>
             </div>
             <div>
-              <span class="text-gray-500">Model Number</span>
-              <p class="font-medium">${this.productDetails.modelNumber}</p>
+              <span class="text-[#8091A7] text-sm leading-[1.44375rem]">Model Number</span>
+              <p class="font-bold text-[#364A63]">${
+                this.productDetails.modelNumber
+              }</p>
             </div>
           </div>
   
           <!-- Color Selection -->
           <div class="mb-6">
-            <h3 class="text-gray-800 font-medium mb-2">Band Color</h3>
+            <h3 class="text-[#364A63] font-bold mb-[0.625rem]">Band Color</h3>
             <div id="${
               this.productDetails.id
-            }-color-buttons" class="flex gap-5">
+            }-color-buttons" class="flex gap-5 leading-5">
               ${this.productDetails.colors
                 .map(
                   (color) => `
                 <button 
                   data-color="${color.name}"
-                  class="w-6 aspect-square rounded-full ${
+                  class="w-4 aspect-square rounded-full ${
                     color.name === this.selectedColor
                       ? `ring-2 ring-offset-2 ring-[${color.colorCode}]`
                       : ""
@@ -302,19 +306,23 @@ class ProductCardRenderer {
   
           <!-- Size Selection -->
           <div class="mb-6">
-            <h3 class="text-gray-800 font-medium mb-2">Wrist Size</h3>
+            <h3 class="text-[#364A63] font-bold leading-5 mb-[0.625rem]">Wrist Size</h3>
             <div id="${this.productDetails.id}-size-button" class="flex gap-2">
               ${Object.entries(this.priceBySize)
                 .map(
                   ([size, price]) => `
                 <button 
-                  class="px-4 py-2 border rounded-md ${
+                  class="px-[1.125rem] text-[#8091A7] text-sm py-2 border rounded-md ${
                     size === this.selectedSize
-                      ? "border-[#6576FF] text-[#6576FF]"
+                      ? "border-[#6576FF]"
                       : "border-gray-300"
                   }"
                   data-size="${size}"
-                >${size} ${price}</button>
+                ><span class="font-bold ${
+                  size === this.selectedSize
+                    ? "text-[#6576FF]"
+                    : "text-[#8091A7]"
+                }">${size}</span> <span class="text-[#8091A7]">$${price}</span></button>
               `
                 )
                 .join("")}
@@ -322,32 +330,33 @@ class ProductCardRenderer {
           </div>
   
           <!-- Add to Cart -->
-          <div class="flex gap-4">
+          <div class="flex gap-x-4">
             <div class="flex items-center border rounded-md">
               <button 
                 id="${this.productDetails.id}-decrease" 
-                class="px-4 py-2 text-gray-600 hover:text-[#6576FF]"
+                class="px-4 py-2 text-[#8091A7] text-[1.1375rem] hover:text-[#6576FF]"
               >-</button>
               <span 
                 id="${this.productDetails.id}-quantity-label" 
-                class="px-4 py-2 border-x"
+                class="px-[1.625rem] py-2 border-x"
               >${this.cartQuantity}</span>
               <button 
                 id="${this.productDetails.id}-increase" 
-                class="px-4 py-2 text-gray-600 hover:text-[#6576FF]"
+                class="px-4 py-2 text-[#8091A7] text-[1.1375rem] hover:text-[#6576FF]"
               >+</button>
             </div>
-            <button 
-              id="${this.productDetails.id}-add-to-cart" 
-              class="flex-1 bg-[#6576FF] text-white py-2 px-6 rounded-md hover:bg-[#7C3AED]"
-            >
-              Add to Cart
-            </button>
-            <button 
-              id="${this.productDetails.id}-favorite-button" 
-              class="p-2 border rounded-md text-${
-                this.isFavorite ? "[#6576FF]" : "transparent"
-              }"
+            <div class="flex gap-x-4">
+                <button 
+                  id="${this.productDetails.id}-add-to-cart" 
+                  class="bg-[#6576FF] text-white px-[1.125rem] py-2 rounded hover:bg-[#7C3AED]"
+                >
+                  Add to Cart
+                </button>
+                <button 
+                  id="${this.productDetails.id}-favorite-button" 
+                  class="p-2 rounded-md text-${
+                    this.isFavorite ? "[#6576FF]" : "transparent"
+                  }"
             >
               <svg class="w-6 h-6 fill-[currentColor] stroke-[#6576FF]" viewBox="0 0 24 24">
                 <path 
@@ -358,6 +367,7 @@ class ProductCardRenderer {
                 />
               </svg>
             </button>
+            </div>
           </div>
         </div>
       </div>
