@@ -418,7 +418,7 @@ class ProductCard extends ProductCardRenderer {
   addToCart = (): void => {
     const product: ProductType = {
       name: this.productDetails.name,
-      id: this.productDetails.id,
+      id: `${this.productDetails.id}-${this.selectedColor}-${this.selectedSize}`,
       image: this.productDetails.images.find(
         (image) => image.color === this.selectedColor
       )!.image,

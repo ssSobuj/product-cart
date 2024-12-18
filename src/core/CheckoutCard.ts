@@ -171,9 +171,15 @@ class CheckoutCard extends CheckoutCardRenderer {
   public addToCart(product: ProductType) {
     console.log("DISPATCHED", product);
 
-    this.products.push(product);
-    this.checkoutCount++;
-    this.updateCheckoutCountUI();
+    const productIndex = this.products.findIndex((p) => p.id === product.id);
+    if (productIndex !== -1) {
+      this.products[productIndex].quantity += product.quantity;
+      this.updateCheckoutCountUI();
+    } else {
+      this.products.push(product);
+      this.checkoutCount++;
+      this.updateCheckoutCountUI();
+    }
   }
 }
 
