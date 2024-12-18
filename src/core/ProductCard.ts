@@ -174,8 +174,15 @@ class ProductCardRenderer {
     });
     this.domRefs().sizeSelectors.forEach((button) => {
       button.classList.remove("border-[#6576FF]", "text-[#6576FF]");
+      button.firstElementChild?.classList.remove("text-[#6576FF]");
       if (button.dataset.size === this.selectedSize) {
+        // Remove the default color class from the button and the span
+        button.classList.remove("border-gray-300");
+        button.firstElementChild?.classList.remove("text-[#8091A7]");
+
+        // Add select color class to the button and the span
         button.classList.add("border-[#6576FF]", "text-[#6576FF]");
+        button.firstElementChild?.classList.add("text-[#6576FF]");
       }
     });
   }
