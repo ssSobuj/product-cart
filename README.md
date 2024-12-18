@@ -34,6 +34,7 @@ Ensure you have the following installed on your system:
 
 ### Installation
 1. Clone the repository:
-   ```bash
+   ```bash or open any terminal
    git clone https://github.com/your-repo-name.git
+   cd your-repo-name
    cd your-repo-name
