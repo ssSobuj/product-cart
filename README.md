@@ -43,4 +43,5 @@ Ensure you have the following installed on your system:
    npn isntall
    npm run dev
 
+### Your app should now be live at http://localhost:3000.
 
