@@ -39,4 +39,7 @@ Ensure you have the following installed on your system:
    ```bash or open any terminal
    git clone https://github.com/your-repo-name.git
    cd your-repo-name
-   cd your-repo-name
+   and type code . and enter
+   and type npn isntall for instaling package
+   after that type npm run dev and enter, it will open http://localhost:5173 in this port
+
