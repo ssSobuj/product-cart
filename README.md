@@ -35,8 +35,13 @@ Ensure you have the following installed on your system:
 - npm (v7 or higher)
 
 ### Installation
-1. Clone the repository:
+1. Clone the repository and setup with those command:
    ```bash or open any terminal
    git clone https://github.com/your-repo-name.git
    cd your-repo-name
-   cd your-repo-name
+   code .
+   npn isntall
+   npm run dev
+
+### Your app should now be live at http://localhost:3000.
+
