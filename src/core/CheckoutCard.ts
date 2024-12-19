@@ -49,19 +49,19 @@ class CheckoutCardRenderer {
     this.domRef.cartItems!.innerHTML = this.products
       .map(
         (product) => `
-      <div class="grid grid-cols-5 gap-4 py-4 border-b items-center">
-        <div class="col-span-2 flex items-center gap-4">
+      <div class="grid grid-cols-8 gap-4 py-4 border-b items-center">
+        <div class="col-span-4 flex items-center gap-4">
           <img src="${product.image}" alt="${
           product.name
         }" class="w-16 h-16 object-cover rounded">
           <span class="font-medium text-[#364A63]">${product.name}</span>
         </div>
-        <div>${product.color}</div>
-        <div>${product.size}</div>
-        <div>${product.quantity}</div>
-        <div class="text-right">$${(product.price * product.quantity).toFixed(
-          2
-        )}</div>
+        <div class="capitalize">${product.color}</div>
+        <div class="font-bold">${product.size}</div>
+        <div class="font-bold">${product.quantity}</div>
+        <div class="text-right font-bold">$${(
+          product.price * product.quantity
+        ).toFixed(2)}</div>
       </div>
     `
       )
@@ -107,12 +107,12 @@ class CheckoutCardRenderer {
           <h2 class="text-3xl font-bold text-[#364A63] mb-6">Your Cart</h2>
           
           <!-- Headers -->
-          <div class="grid grid-cols-6 gap-4 pb-4 border-b text-[#8094ae]">
-            <div class="col-span-2">Item</div>
+          <div class="grid grid-cols-8 gap-4 pb-4 border-b text-[#8094ae]">
+            <div class="col-span-4">Item</div>
             <div>Color</div>
-            <div>Size</div> 
-            <div>Qnt</div> 
-            <div class="text-right">Price</div>
+            <div ">Size</div> 
+            <div ">Qnt</div> 
+            <div class="text-right ">Price</div>
           </div>
   
           <!-- Cart Items -->
@@ -121,9 +121,9 @@ class CheckoutCardRenderer {
           </div>
   
           <!-- Total -->
-          <div class="flex justify-between items-center mt-6 mb-8">
-            <div class="text-xl font-bold text-[#364A63]">Total</div>
-            <div id="total-items" class="text-xl font-bold text-[#364A63]">${totalItems}</div>
+          <div class="grid grid-cols-8 gap-4 mt-6 mb-8">
+            <div class="text-xl font-bold text-[#364A63] col-span-6">Total</div>
+            <div id="total-items" class="text-xl font-bold text-[#364A63] ">${totalItems}</div>
             <div class="text-xl font-bold text-[#364A63]">$<span id="total-price">${total.toFixed(
               2
             )}</span></div>
@@ -131,10 +131,10 @@ class CheckoutCardRenderer {
   
           <!-- Buttons -->
           <div class="flex justify-end gap-4">
-            <button id="continue-shopping" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+            <button id="continue-shopping" class="px-6 py-3 border font-bold border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
               Continue Shopping
             </button>
-            <button id="checkout-button" class="px-6 py-3 bg-[#6576FF] text-white rounded-lg hover:bg-[#4b5bff]">
+            <button id="checkout-button" class="px-6 py-3 bg-[#6576FF] font-bold text-white rounded-md hover:bg-[#4b5bff]">
               Checkout
             </button>
           </div>

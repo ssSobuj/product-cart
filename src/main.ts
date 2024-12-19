@@ -54,7 +54,6 @@ const products: ProductDetailsType[] = [
   },
 ];
 
-const productCard = new ProductCard(products[0]);
 for (const product of products) {
   const productCard = new ProductCard(product);
   app!.appendChild(productCard.render());

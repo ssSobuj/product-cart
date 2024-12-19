@@ -88,9 +88,11 @@ class ProductCardRenderer {
   protected priceBySize: { [size: string]: number } = {};
   protected stock: number = 0;
   protected selectColor(color: string): void {
+    console.log(color);
     throw new Error("Method not implemented.");
   }
   protected selectSize(size: string): void {
+    console.log(size);
     throw new Error("Method not implemented.");
   }
   protected toggleFavorite(): void {
@@ -272,7 +274,7 @@ class ProductCardRenderer {
           </p>
   
           <!-- Product Info -->
-          <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="flex  gap- mb-6">
             <div>
               <span class="text-[#8091A7] text-sm leading-[1.44375rem]">Type</span>
               <p class="font-bold text-[#364A63]">${
