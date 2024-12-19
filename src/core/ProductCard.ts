@@ -209,9 +209,9 @@ class ProductCardRenderer {
    */
   public render(): HTMLDivElement {
     const app = `
-      <div class="rounded-lg w-full flex flex-col md:flex-row gap-x-[3.75rem] py-10">
+      <div class="rounded-lg w-full flex flex-col xl:flex-row gap-8 gap-x-[3.75rem] py-10">
         <!-- Left side - Image -->
-        <div class="md:w-1/2 w-full rounded-lg flex items-center justify-center">
+        <div class="xl:w-1/2 w-full rounded-lg flex items-center xl:justify-center">
           <img 
             id="${this.productDetails.id}-product-image" 
             src="${this.productDetails.defaultImage}" 
@@ -221,7 +221,7 @@ class ProductCardRenderer {
         </div>
   
         <!-- Right side - Product Details -->
-        <div class="md:w-1/2 w-full mt-5 md:mt-0 flex flex-col justify-center">
+        <div class="xl:w-1/2 w-full mt-5 md:mt-0 flex flex-col justify-center">
           <h1 class="text-[2.5rem] leading-[2.75rem] font-bold text-[#364A63] mb-3">
             ${this.productDetails.name}
           </h1>
