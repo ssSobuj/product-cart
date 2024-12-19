@@ -35,11 +35,12 @@ Ensure you have the following installed on your system:
 - npm (v7 or higher)
 
 ### Installation
-1. Clone the repository:
+1. Clone the repository and setup with those command:
    ```bash or open any terminal
    git clone https://github.com/your-repo-name.git
    cd your-repo-name
-   and type code . and enter
-   and type npn isntall for instaling package
-   after that type npm run dev and enter, it will open http://localhost:5173 in this port
+   code .
+   npn isntall
+   npm run dev
+
 
