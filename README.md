@@ -2,6 +2,8 @@
 
 This project is a **Vite-based TypeScript project** styled with **Tailwind CSS**, featuring an add-to-cart functionality. Users can add products with different sizes and prices to their cart. The project uses modern JavaScript classes to handle business logic and user interactions.
 
+## [Live Preview](https://product-cart-html.vercel.app)
+
 ## Features
 
 ### User Features
